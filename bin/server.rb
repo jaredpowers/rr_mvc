@@ -2,7 +2,6 @@ require 'socket'
 require 'timeout'
 require 'erb'
 require 'json'
-require 'pry'
 require_relative '../config/router'
 require_relative '../lib/all'
 
@@ -10,13 +9,10 @@ module App
 
   def App.tasks
     @all_tasks ||= [
-      (Task.new(1, "Blog Post", false)),
-      (Task.new(2, "Go to Grocery Store", false)),
-      (Task.new(3, "Go to the Greenbelt", false)),
-      (Task.new(4, "Play with the band", false)),
-      (Task.new(5, "Walk the dog", false)),
-      (Task.new(6, "Do that painting", false)),
-      (Task.new(7, "Pay the bills", false))
+      (Task.new(1, "Finish Homework", false)),
+      (Task.new(2, "Read article on Ruby", false)),
+      (Task.new(3, "Write a blog", false)),
+      (Task.new(4, "Call mom", false))
     ]
   end
 end

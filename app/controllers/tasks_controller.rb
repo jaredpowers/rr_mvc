@@ -1,12 +1,10 @@
-require 'erb'
-
 class TasksController < ApplicationController
   def index
     if request[:format] == "json"
       render App.tasks.to_json, status: "200 OK"
     else
       @tasks = App.tasks
-      render_template 'index.html.erb'
+      render_template 'tasks/index.html.erb'
     end
   end
 
@@ -18,8 +16,10 @@ class TasksController < ApplicationController
         render task.to_json
       else
         @task = task
-        render_template 'show.html.erb'
+        render_template 'tasks/show.html.erb'
       end
+    else
+      render_not_found
     end
   end
 
@@ -28,7 +28,7 @@ class TasksController < ApplicationController
   end
 
   def create
-    last_task = App.tasks.max_by { |task| task.id}
+    last_task = App.tasks.max_by { |task| task.id }
     new_id = last_task.id + 1
 
     App.tasks.push(
@@ -41,7 +41,6 @@ class TasksController < ApplicationController
 
   def update
     task = find_task_by_id
-
     if task
       unless params["body"].nil? || params["body"].empty?
         task.body = params["body"]
@@ -55,23 +54,26 @@ class TasksController < ApplicationController
 
   def destroy
     task = find_task_by_id
+
     if task
-      App.tasks.delete(task) #destory it
-        render ({ message: "Successfully Deleted Task"}).to_json
-      else
-        render_not_found
+      App.tasks.delete(task)
+      render({ message: "Successfully Deleted Task" }.to_json)
+    else
+      render_not_found
     end
   end
 
-    private
+  private
+  def find_task_by_id
+    App.tasks.find { |t| t.id == params[:id].to_i}
+  end
 
-    def find_task_by_id
-      App.tasks.find { |t| t.id == params[:id].to_i }
-    end
+  def render_not_found
+    return_message = {
+      message: "Task not found!",
+      status: "404"
+    }.to_json
 
-    def render_not_found
-      return_message = {message: "Task not found", status: '404'}.to_json
-
-      render return_message, status: "404 Not Found"
-    end
+    render return_message, status: "404 NOT FOUND!"
+  end
 end
