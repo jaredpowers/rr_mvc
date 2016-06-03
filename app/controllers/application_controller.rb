@@ -14,6 +14,11 @@ class ApplicationController
     @request[:params]
   end
 
+  def render_template(location, opts = {})
+    template = ERB.new(File.read("app/views/" + location))
+    render(template.result(binding), opts.merge({ as: "text/html" }))
+  end
+
   def render(body, opts = {})
     {
       body: body,

@@ -4,20 +4,13 @@ class Router
   end
 
   def route
-    # Routes are parsed from top down, so make sure they follow this style
-    # /resource/:id/action
-    # /resouce/:id
-    # /resource
-    # If you don't use that order, it will be like the if statements in fizzbuzz
-    # syntax:
-    # get(<route_string>, <controller_name_constant>, <action_name_symbol)
-    # put('/tweets/:id/edit', TweetsController, :edit)
-    #This route would be for putting an update for the tweet where :id is the number in the URL
-    #
-    # Put your routes in this array using the get, post, put, delete methods below. (remember order matters)
     [
-      get('/users/:id', UsersController, :show),
-      get('/users', UsersController, :index)
+      delete('/tasks/:id', TasksController, :destroy),
+      put('/tasks/:id', TasksController, :update),
+      get('/tasks/new', TasksController, :new),
+      get('/tasks/:id', TasksController, :show),
+      get('/tasks', TasksController, :index),
+      post('/tasks', TasksController, :create)
     ].find(&:itself)
   end
 
@@ -25,25 +18,25 @@ class Router
 
   def get(url_str, resource, action)
     if get? && route_match?(url_str)
-      resource.new(@request).send(action)
+      send_to_controller(resource, action)
     end
   end
 
   def post(url_str, resource, action)
     if post? && route_match?(url_str)
-      resource.new(@request).send(action)
+      send_to_controller(resource, action)
     end
   end
 
   def put(url_str, resource, action)
     if put? && route_match?(url_str)
-      resource.new(@request).send(action)
+      send_to_controller(resource, action)
     end
   end
 
   def delete(url_str, resource, action)
     if delete? && route_match?(url_str)
-      resource.new(@request).send(action)
+      send_to_controller(resource, action)
     end
   end
 
@@ -61,6 +54,14 @@ class Router
 
   def delete?
     @request[:method] == "DELETE"
+  end
+
+  def send_to_controller(resource, action)
+    @request[:params].merge!({
+      controller_name: resource.to_s,
+      action_name: action
+    })
+    resource.new(@request).send(action)
   end
 
   def route_match?(url)

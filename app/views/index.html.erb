@@ -1,0 +1,7 @@
+<h1> Here are your tasks </h1>
+
+<ul>
+  <% @tasks.each do |task| %>
+    <li><%= task.body %> | <a href="/tasks/<%= task.id %>">show</a></li>
+  <% end %>
+</ul>
